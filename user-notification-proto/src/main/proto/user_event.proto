@@ -1,0 +1,25 @@
+syntax = "proto3";
+package org.max2ba.usernotificationservcei.proto;
+option java_multiple_files = true;
+option java_package = "org.max2ba.usernotificationservcei.proto";
+option java_outer_classname = "UserNotificationProto";
+
+service UserNotificationService {
+  rpc SendUserNotification (UserNotificationRequest) returns (UserNotificationResponse);
+}
+
+message UserNotificationRequest {
+  UserOperation user_operation = 1;
+  string email = 2;
+}
+
+enum UserOperation {
+  USER_OPERATION_UNSPECIFIED = 0;
+  CREATE = 1;
+  DELETE = 2;
+}
+
+message UserNotificationResponse {
+  string message = 1;
+  string details = 2;
+}

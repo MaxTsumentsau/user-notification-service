@@ -1,0 +1,18 @@
+post:
+  tags:
+    - users
+  summary: Создать пользователя
+  operationId: createUser
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/v1/UserRequest.yaml'
+  responses:
+    '201':
+      description: Пользователь успешно создан
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/v1/UserDto.yaml'

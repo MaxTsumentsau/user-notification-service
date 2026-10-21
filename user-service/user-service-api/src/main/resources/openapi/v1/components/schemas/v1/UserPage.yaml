@@ -1,0 +1,46 @@
+type: object
+properties:
+  content:
+    type: array
+    items:
+      $ref: 'UserDto.yaml'
+  pageable:
+    type: object
+    properties:
+      pageNumber:
+        type: integer
+      pageSize:
+        type: integer
+      offset:
+        type: integer
+      paged:
+        type: boolean
+      unpaged:
+        type: boolean
+  totalPages:
+    type: integer
+  totalElements:
+    type: integer
+    format: int64
+  last:
+    type: boolean
+  size:
+    type: integer
+  number:
+    type: integer
+  sort:
+    type: object
+    properties:
+      empty:
+        type: boolean
+      sorted:
+        type: boolean
+      unsorted:
+        type: boolean
+  first:
+    type: boolean
+  numberOfElements:
+    type: integer
+  empty:
+    type: boolean
+

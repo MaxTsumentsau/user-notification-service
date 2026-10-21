@@ -1,0 +1,66 @@
+put:
+  tags:
+    - users
+  summary: Обновить пользователя
+  operationId: updateUser
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/v1/UserRequest.yaml'
+  responses:
+    '200':
+      description: Пользователь успешно обновлен
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/v1/UserDto.yaml'
+
+get:
+  tags:
+    - users
+  summary: Получить пользователя по ID
+  operationId: getUserById
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    '200':
+      description: Успешный ответ
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/v1/UserDto.yaml'
+
+delete:
+  tags:
+    - users
+  summary: Удалить пользователя
+  operationId: deleteUser
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    '200':
+      description: Пользователь успешно удален
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/v1/UserDto.yaml'
+  

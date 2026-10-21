@@ -1,0 +1,6 @@
+type: string
+description: Тип операции с пользователем
+enum:
+  - CREATE
+  - DELETE
+  

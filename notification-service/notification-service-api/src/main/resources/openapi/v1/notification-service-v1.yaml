@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: Notification Service API
+  description: Notification Service API
+  version: 1.0.0
+
+tags:
+  - name: users
+    description: Операции с уведомлениями
+
+components:
+  schemas:
+    UserOperation:
+      $ref: 'components/enums/UserOperation.yaml'
+    UserDto:
+      $ref: 'components/schemas/SendEmailRequest.yaml'
+    UserPage:
+      $ref: 'components/schemas/SendMessageResponse.yaml'
+
+paths:
+  /api/v1/users:
+    $ref: 'paths/notifications/notifications-send.yaml'

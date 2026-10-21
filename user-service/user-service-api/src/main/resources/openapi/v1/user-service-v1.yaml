@@ -1,0 +1,27 @@
+openapi: 3.0.3
+info:
+  title: User Service API
+  description: User Service API
+  version: 1.0.0
+
+tags:
+  - name: users
+    description: Операции с пользователями
+
+components:
+  schemas:
+    UserRequest:
+      $ref: 'components/schemas/v1/UserRequest.yaml'
+    UserDto:
+      $ref: 'components/schemas/v1/UserDto.yaml'
+    UserPage:
+      $ref: 'components/schemas/v1/UserPage.yaml'
+
+paths:
+  /api/v1/users:
+    $ref: 'paths/users/users-create.yaml'
+  /api/v1/users/{id}:
+    $ref: 'paths/users/users-by-id.yaml'
+  /api/v1/users/search:
+    $ref: 'paths/users/users-search.yaml'
+  

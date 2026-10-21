@@ -1,0 +1,15 @@
+type: object
+description: Запрос на отправку email-уведомления
+required:
+  - userOperation
+  - email
+properties:
+  userOperation:
+    $ref: '../enums/UserOperation.yaml'
+  email:
+    type: string
+    format: email
+    description: Адрес электронной почты получателя
+    minLength: 1
+    example: "user@example.com"
+  

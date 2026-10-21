@@ -1,0 +1,31 @@
+get:
+  tags:
+    - users
+  summary: Поиск пользователей с пагинацией
+  operationId: searchUsers
+  parameters:
+    - name: name
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+    - name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 5
+  responses:
+    '200':
+      description: Успешный ответ (страница с пользователями)
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/v1/UserPage.yaml'
+  

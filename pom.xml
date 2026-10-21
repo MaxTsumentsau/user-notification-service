@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.max2ba.usernotificationservcei</groupId>
+    <artifactId>user-notification-service</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>user-service</module>
+        <module>user-service/user-service-api</module>
+        <module>user-service/user-service-impl</module>
+        <module>notification-service</module>
+        <module>notification-service/notification-service-api</module>
+        <module>notification-service/notification-service-impl</module>
+        <module>user-notification-proto</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <openapi-generator.version>7.9.0</openapi-generator.version>
+        <springdoc.version>2.2.0</springdoc.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
+        <kafka-clients.version>3.6.0</kafka-clients.version>
+
+        <!-- Test versions -->
+        <testcontainers.version>2.0.4</testcontainers.version>
+        <wiremock-standalone.version>3.13.2</wiremock-standalone.version>
+        <wiremock-spring-boot.version>3.2.0</wiremock-spring-boot.version>
+        <easy-random.version>7.1.1</easy-random.version>
+
+        <exception-advice-starter.version>1.0.8</exception-advice-starter.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.max2ba</groupId>
+                <artifactId>user-service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>${jackson-databind-nullable.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ru.asber.starter</groupId>
+                <artifactId>exception-advice-starter</artifactId>
+                <version>${exception-advice-starter.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-generator.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

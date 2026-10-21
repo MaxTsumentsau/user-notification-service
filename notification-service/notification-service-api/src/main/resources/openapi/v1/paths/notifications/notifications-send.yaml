@@ -1,0 +1,20 @@
+post:
+  tags:
+    - notifications
+  summary: Отправить email-уведомление
+  operationId: sendEmail
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/SendEmailRequest.yaml'
+  responses:
+    '200':
+      description: Уведомление успешно отправлено (или обработано)
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/SendMessageResponse.yaml'
+    '400':
+      description: Неверные входные параметры (ошибка валидации)

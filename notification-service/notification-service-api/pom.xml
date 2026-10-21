@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.max2ba.usernotificationservcei</groupId>
+        <artifactId>user-notification-service</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>notification-service-api</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <!-- Спецификации разделяются по версиям: каждая версия = свой execution.
+                         v1: единственная версия контракта на текущий момент. -->
+                    <execution>
+                        <id>notification-service-api-v1</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/v1/notification-service-v1.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <generateApis>true</generateApis>
+                            <generateModels>true</generateModels>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <generateModelTests>false</generateModelTests>
+                            <generateApiTests>false</generateApiTests>
+                            <apiPackage>org.max2ba.notificationservice.openapi.api</apiPackage>
+                            <modelPackage>org.max2ba.notificationservice.openapi.model</modelPackage>
+                            <invokerPackage>org.max2ba.notificationservice.openapi</invokerPackage>
+                            <configOptions>
+                                <!-- Интерфейсы контроллеров с аннотациями Spring MVC + @FeignClient -->
+                                <interfaceOnly>true</interfaceOnly>
+                                <useTags>true</useTags>
+                                <useJakartaEe>true</useJakartaEe>
+                                <library>spring-boot</library>
+                                <!-- LocalDate/LocalDateTime/LocalTime вместо OffsetDateTime -->
+                                <dateLibrary>java8-localdatetime</dateLibrary>
+                                <!-- Отключаем JsonNullable: опциональные поля = null -->
+                                <openApiNullable>false</openApiNullable>
+                                <!-- Методы возвращают DTO напрямую (@ResponseStatus) -->
+                                <useResponseEntity>false</useResponseEntity>
+                                <!-- Модели с builder() и конструктором со всеми аргументами -->
+                                <generateBuilders>true</generateBuilders>
+                                <generateConstructorWithAllArgs>true</generateConstructorWithAllArgs>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <delegatePattern>false</delegatePattern>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

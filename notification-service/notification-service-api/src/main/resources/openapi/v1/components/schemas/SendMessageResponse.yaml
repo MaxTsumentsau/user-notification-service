@@ -1,0 +1,11 @@
+type: object
+description: Универсальный ответ API с сообщением и деталями
+properties:
+  message:
+    type: string
+    description: Краткое сообщение о результате операции
+    example: "Операция выполнена успешно"
+  details:
+    type: string
+    description: Дополнительные детали или описание ошибки
+    example: "Пользователь с id 123 удален"
