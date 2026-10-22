@@ -1,0 +1,24 @@
+{
+  "name": "users-cdc-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "qwerty",
+    "database.dbname": "user_service_db",
+    "topic.prefix": "user-service",
+    "plugin.name": "pgoutput",
+    "publication.name": "dbz_users_publication",
+    "slot.name": "debezium_users_slot",
+    "table.include.list": "public.users",
+    "snapshot.mode": "initial",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.add.fields": "op",
+    "transforms.unwrap.add.fields.prefix": "__"
+  }
+}
