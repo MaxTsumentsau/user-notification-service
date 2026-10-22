@@ -142,21 +142,21 @@ services:
       retries: 10
       start_period: 30s
 
-  kafka-un-ui:
-    image: provectuslabs/kafka-ui:v0.7.0
-    container_name: kafka-un-ui
-    ports:
-      - "8050:8080"
-    environment:
-      - SERVER_PORT=8080
-      - KAFKA_CLUSTERS_0_NAME=local-kraft-cluster
-      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka-un-1:9092,kafka-un-2:9092,kafka-un-3:9092
-    networks:
-      - kafka-un-network
-    depends_on:
-      - kafka-un-1
-      - kafka-un-2
-      - kafka-un-3
+#  kafka-un-ui:
+#    image: provectuslabs/kafka-ui:v0.7.0
+#    container_name: kafka-un-ui
+#    ports:
+#      - "8050:8080"
+#    environment:
+#      - SERVER_PORT=8080
+#      - KAFKA_CLUSTERS_0_NAME=local-kraft-cluster
+#      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka-un-1:9092,kafka-un-2:9092,kafka-un-3:9092
+#    networks:
+#      - kafka-un-network
+#    depends_on:
+#      - kafka-un-1
+#      - kafka-un-2
+#      - kafka-un-3
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.7.0

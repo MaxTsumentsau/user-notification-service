@@ -12,7 +12,7 @@
       "type": {
         "type": "enum",
         "name": "UserOperation",
-        "symbols": ["CREATE", "DELETE"]
+        "symbols": ["CREATE", "DELETE", "UPDATE"]
       }
     }
   ]

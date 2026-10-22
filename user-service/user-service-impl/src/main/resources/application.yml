@@ -35,3 +35,8 @@ grpc:
     notification-service:
       address: static://localhost:9092
       negotiationType: PLAINTEXT
+app:
+  kafka:
+    topics:
+      users-source: "user-service.public.users"
+      user-events: "user-events"

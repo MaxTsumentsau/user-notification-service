@@ -1,5 +1,6 @@
 package org.max2ba.usernotificationservcei.kafka;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.TopicConfig;
 import org.springframework.context.annotation.Bean;
@@ -10,15 +11,15 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @EnableKafka
 @Configuration
+@RequiredArgsConstructor
 public class KafkaTopicConfig {
 
-    public static final String USER_SERVICE_PUBLIC_USERS = "user-service.public.users";
-    public static final String USER_EVENT = "user-events";
+    private final KafkaTopicsProperties topics;
 
     @Bean
     @Profile("!test")
     public NewTopic PublicUsersTopic() {
-        return TopicBuilder.name(USER_SERVICE_PUBLIC_USERS)
+        return TopicBuilder.name(topics.getUsersSource())
                 .partitions(4)
                 .replicas(2)
                 .config(TopicConfig.CLEANUP_POLICY_CONFIG, "delete")
@@ -29,7 +30,7 @@ public class KafkaTopicConfig {
     @Bean
     @Profile("!test")
     public NewTopic UserEventsTopic() {
-        return TopicBuilder.name(USER_EVENT)
+        return TopicBuilder.name(topics.getUserEvents())
                 .partitions(4)
                 .replicas(2)
                 .config(TopicConfig.CLEANUP_POLICY_CONFIG, "delete")

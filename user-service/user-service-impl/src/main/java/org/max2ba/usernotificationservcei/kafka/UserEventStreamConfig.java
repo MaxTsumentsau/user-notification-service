@@ -10,7 +10,7 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.max2ba.usernotificationservcei.avro.UserEvent;
-import org.max2ba.usernotificationservcei.avro.UserOperation;
+import org.max2ba.usernotificationservcei.util.UserEventMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
@@ -20,30 +20,18 @@ import org.springframework.kafka.annotation.EnableKafkaStreams;
 @RequiredArgsConstructor
 public class UserEventStreamConfig {
 
+    private final KafkaTopicsProperties topics;
     private final GenericAvroSerde genericAvroSerde;
     private final SpecificAvroSerde<UserEvent> specificAvroSerde;
 
     @Bean
     public KStream<String, UserEvent> processUserEvents(StreamsBuilder builder) {
-        // 1. Используем внедрённый genericAvroSerde
-        KStream<String, GenericRecord> source = builder.stream(
-                "user-service.public.users",
-                Consumed.with(Serdes.String(), genericAvroSerde)
-        );
+        KStream<String, GenericRecord> source = builder
+                .stream(topics.getUsersSource(), Consumed.with(Serdes.String(), genericAvroSerde));
 
-        // 2. Трансформируем
-        KStream<String, UserEvent> transformed = source.mapValues(record -> {
-            String email = record.get("email").toString();
-            boolean isDeleted = Boolean.parseBoolean(record.get("__deleted").toString());
+        KStream<String, UserEvent> transformed = source.mapValues(UserEventMapper::toUserEvent);
 
-            return UserEvent.newBuilder()
-                    .setEmail(email)
-                    .setOperation(isDeleted ? UserOperation.DELETE : UserOperation.CREATE)
-                    .build();
-        });
-
-        // 3. Используем внедрённый specificAvroSerde
-        transformed.to("user-events", Produced.with(Serdes.String(), specificAvroSerde));
+        transformed.to(topics.getUserEvents(), Produced.with(Serdes.String(), specificAvroSerde));
 
         return transformed;
     }
