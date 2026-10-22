@@ -23,6 +23,7 @@
         <module>notification-service/notification-service-api</module>
         <module>notification-service/notification-service-impl</module>
         <module>user-notification-proto</module>
+        <module>user-notification-avro</module>
     </modules>
 
     <properties>
@@ -86,4 +87,11 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
 </project>

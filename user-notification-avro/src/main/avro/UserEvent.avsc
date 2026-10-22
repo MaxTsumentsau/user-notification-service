@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "UserEvent",
+  "namespace": "org.max2ba.usernotificationservcei.avro",
+  "fields": [
+    {
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "operation",
+      "type": {
+        "type": "enum",
+        "name": "UserOperation",
+        "symbols": ["CREATE", "DELETE"]
+      }
+    }
+  ]
+}

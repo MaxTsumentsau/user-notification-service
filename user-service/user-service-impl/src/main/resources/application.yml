@@ -17,6 +17,17 @@ spring:
   sql:
     init:
       mode: always
+  kafka:
+    bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    properties:
+      schema.registry.url: http://localhost:8081
+    streams:
+      application-id: user-event-transformer
+      properties:
+        schema.registry.url: http://localhost:8081
 server:
   port: 8480
 grpc:
