@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+# Infra snapshots
+infra/_snapshots/
+*.bak

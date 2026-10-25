@@ -3,7 +3,7 @@ spring:
     name: notification-service
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5556/notification_service_db
+    url: jdbc:postgresql://postgres:5432/notification_service_db
     username: postgres
     password: qwerty
   jpa:
@@ -18,14 +18,14 @@ spring:
     init:
       mode: always
   kafka:
-    bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+    bootstrap-servers: my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
     consumer:
       group-id: notification-service-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       properties:
-        schema.registry.url: http://localhost:8081
+        schema.registry.url: http://schema-registry:8081
         specific.avro.reader: true
 server:
   port: 8481

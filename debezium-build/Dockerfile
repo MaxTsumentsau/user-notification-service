@@ -1,4 +1,4 @@
-FROM quay.io/debezium/connect:2.7.4.Final
+FROM quay.io/strimzi/kafka:1.2.0-kafka-4.3.1
 
 USER root
 

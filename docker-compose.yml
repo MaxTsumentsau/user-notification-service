@@ -179,7 +179,7 @@ services:
   debezium-connect:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: debezium-build/Dockerfile
     container_name: debezium-connect
     hostname: debezium-connect
     ports:

@@ -1,0 +1,73 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnect
+metadata:
+  name: my-connect-cluster
+  namespace: kafka
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+spec:
+  replicas: 1
+  bootstrapServers: my-cluster-kafka-bootstrap:9092
+
+  # Эти поля теперь обязательны на верхнем уровне:
+  groupId: connect-cluster
+  configStorageTopic: connect-cluster-configs
+  offsetStorageTopic: connect-cluster-offsets
+  statusStorageTopic: connect-cluster-status
+
+  # Ограничения ресурсов + JVM heap
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+  jvmOptions:
+    "-Xmx": "512m"
+    "-Xms": "256m"
+
+  # Остальные настройки конвертеров остаются в config:
+  config:
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    value.converter: io.confluent.connect.avro.AvroConverter
+    value.converter.schema.registry.url: http://schema-registry.my-java-app.svc.cluster.local:8081
+    value.converter.schemas.enable: false
+    config.storage.replication.factor: 1
+    offset.storage.replication.factor: 1
+    status.storage.replication.factor: 1
+
+  build:
+    output:
+      type: imagestream
+      image: my-connect-cluster:latest
+    plugins:
+      - name: debezium-connector-postgres
+        artifacts:
+          - type: tgz
+            url: https://repo1.maven.org/maven2/io/debezium/debezium-connector-postgres/2.7.4.Final/debezium-connector-postgres-2.7.4.Final-plugin.tar.gz
+      # Добавляем Avro Converter и его зависимости
+      - name: kafka-connect-avro-converter
+        artifacts:
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/kafka-connect-avro-converter/7.7.0/kafka-connect-avro-converter-7.7.0.jar
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/kafka-connect-avro-data/7.7.0/kafka-connect-avro-data-7.7.0.jar
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/kafka-schema-converter/7.7.0/kafka-schema-converter-7.7.0.jar
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/kafka-avro-serializer/7.7.0/kafka-avro-serializer-7.7.0.jar
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/kafka-schema-serializer/7.7.0/kafka-schema-serializer-7.7.0.jar
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/kafka-schema-registry-client/7.7.0/kafka-schema-registry-client-7.7.0.jar
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/common-config/7.7.0/common-config-7.7.0.jar
+          - type: jar
+            url: https://packages.confluent.io/maven/io/confluent/common-utils/7.7.0/common-utils-7.7.0.jar
+          - type: jar
+            url: https://repo1.maven.org/maven2/org/apache/avro/avro/1.11.3/avro-1.11.3.jar
+          - type: jar
+            url: https://repo1.maven.org/maven2/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar
+          - type: jar
+            url: https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar

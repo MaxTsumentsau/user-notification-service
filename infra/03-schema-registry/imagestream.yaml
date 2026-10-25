@@ -1,0 +1,17 @@
+﻿apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: schema-registry
+  namespace: my-java-app
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: 7.7.12
+      from:
+        kind: DockerImage
+        name: confluentinc/cp-schema-registry:7.7.12
+      importPolicy:
+        scheduled: false
+      referencePolicy:
+        type: Source

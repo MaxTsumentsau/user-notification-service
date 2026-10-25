@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy to Nexus') {
+            steps {
+                configFileProvider([configFile(fileId: 'nexus-settings', variable: 'NEXUS_SETTINGS')]) {
+                    sh '''
+                        if [ ! -d "/tmp/apache-maven-3.9.6" ]; then
+                            curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz -o /tmp/maven.tar.gz
+                            tar -xzf /tmp/maven.tar.gz -C /tmp
+                        fi
+                        if [ ! -d "/tmp/jdk-17.0.11+9" ]; then
+                            curl -fsSL https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.11%2B9/OpenJDK17U-jdk_x64_linux_hotspot_17.0.11_9.tar.gz -o /tmp/jdk17.tar.gz
+                            tar -xzf /tmp/jdk17.tar.gz -C /tmp
+                        fi
+
+                        export JAVA_HOME=/tmp/jdk-17.0.11+9
+                        export PATH=$JAVA_HOME/bin:/tmp/apache-maven-3.9.6/bin:$PATH
+
+                        # Никаких cd. Просто указываем Maven главный файл в текущей папке
+                        mvn clean deploy -U \
+                            -f pom.xml \
+                            -pl notification-service/notification-service-api \
+                            -s $NEXUS_SETTINGS \
+                            -DskipTests
+                    '''
+                }
+            }
+        }
+    }
+}

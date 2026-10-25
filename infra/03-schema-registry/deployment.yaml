@@ -1,0 +1,39 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schema-registry
+  namespace: my-java-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: schema-registry
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: schema-registry
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: schema-registry
+          image: image-registry.openshift-image-registry.svc:5000/my-java-app/schema-registry:7.7.12
+          env:
+            - name: SCHEMA_REGISTRY_HOST_NAME
+              value: schema-registry
+            - name: SCHEMA_REGISTRY_LISTENERS
+              value: http://0.0.0.0:8081
+            - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+              value: PLAINTEXT://my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+            - name: SCHEMA_REGISTRY_AVRO_COMPATIBILITY_LEVEL
+              value: backward_transitive
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xms256m -Xmx512m"
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"

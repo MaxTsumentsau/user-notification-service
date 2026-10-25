@@ -1,0 +1,41 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akhq
+  namespace: my-java-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: akhq
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: akhq
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: akhq
+          image: image-registry.openshift-image-registry.svc:5000/my-java-app/akhq:0.28.0
+          env:
+            - name: MICRONAUT_CONFIG_FILES
+              value: /config/application.yml
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xms256m -Xmx512m"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+          volumeMounts:
+            - mountPath: /config
+              name: akhq-config
+              readOnly: true
+      volumes:
+        - name: akhq-config
+          configMap:
+            name: akhq-config
