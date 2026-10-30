@@ -1,0 +1,91 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'feature/add-kafka-debezium-avro',
+                    url: 'https://github.com/MaxTsumentsau/user-notification-service.git'
+            }
+        }
+
+        stage('Build Maven') {
+            steps {
+                configFileProvider([configFile(fileId: 'nexus-settings', variable: 'NEXUS_SETTINGS')]) {
+                    sh '''
+                        # Скачиваем Maven и JDK, если их нет
+                        if [ ! -d "/tmp/apache-maven-3.9.6" ]; then
+                            curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz -o /tmp/maven.tar.gz
+                            tar -xzf /tmp/maven.tar.gz -C /tmp
+                        fi
+                        if [ ! -d "/tmp/jdk-17.0.11+9" ]; then
+                            curl -fsSL https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.11%2B9/OpenJDK17U-jdk_x64_linux_hotspot_17.0.11_9.tar.gz -o /tmp/jdk17.tar.gz
+                            tar -xzf /tmp/jdk17.tar.gz -C /tmp
+                        fi
+
+                        export JAVA_HOME=/tmp/jdk-17.0.11+9
+                        export PATH=$JAVA_HOME/bin:/tmp/apache-maven-3.9.6/bin:$PATH
+
+                        # Убираем -am, чтобы Maven не собирал API, а взял его из Nexus
+                        mvn clean package -U \
+                            -f pom.xml \
+                            -pl user-service/user-service-impl \
+                            -s $NEXUS_SETTINGS \
+                            -DskipTests
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Image (S2I)') {
+            steps {
+                sh '''
+                    # 1. Скачиваем oc, если его нет
+                    if [ ! -f "/tmp/oc" ]; then
+                        echo "oc not found, downloading..."
+                        curl -fsSL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz -o /tmp/oc.tar.gz
+                        tar -xzf /tmp/oc.tar.gz -C /tmp oc
+                    fi
+
+                    # 2. Добавляем /tmp в PATH для этой сессии
+                    export PATH=/tmp:$PATH
+
+                    # 3. Копируем Dockerfile
+                    cp user-service/user-service-impl/Dockerfile ./Dockerfile
+
+                    # 4. Создаем BuildConfig
+                    oc new-build --name=user-service --binary --strategy=docker -n my-java-app || true
+
+                    # 5. Запускаем сборку
+                    oc start-build user-service --from-dir=. --follow -n my-java-app
+
+                    # 6. Удаляем временный Dockerfile
+                    rm -f ./Dockerfile
+
+                    # 7. Тегируем
+                    oc tag user-service:latest user-service:1.0-SNAPSHOT -n my-java-app
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    # 1. Скачиваем oc, если его нет (на случай, если предыдущая стадия не сохранила его в /tmp)
+                    if [ ! -f "/tmp/oc" ]; then
+                        echo "oc not found, downloading..."
+                        curl -fsSL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz -o /tmp/oc.tar.gz
+                        tar -xzf /tmp/oc.tar.gz -C /tmp oc
+                    fi
+
+                    # 2. Добавляем /tmp в PATH для этой сессии
+                    export PATH=/tmp:$PATH
+
+                    # 3. Выполняем деплой
+                    oc new-app user-service:latest -n my-java-app || true
+                    oc set image deployment/user-service user-service=image-registry.openshift-image-registry.svc:5000/my-java-app/user-service:latest -n my-java-app
+                '''
+            }
+        }
+    }
+}

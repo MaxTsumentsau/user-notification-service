@@ -1,0 +1,51 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: my-java-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:18.1-alpine3.23
+          args:
+            - postgres
+            - -c
+            - wal_level=logical
+            - -c
+            - max_replication_slots=4
+            - -c
+            - max_wal_senders=4
+          env:
+            - name: POSTGRES_DB
+              value: user_service_db
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: qwerty
+            - name: TZ
+              value: Europe/Minsk
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-data

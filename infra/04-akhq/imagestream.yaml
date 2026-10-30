@@ -1,0 +1,17 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: akhq
+  namespace: my-java-app
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: 0.28.0
+      from:
+        kind: DockerImage
+        name: tchiotludo/akhq:0.28.0
+      importPolicy:
+        scheduled: false
+      referencePolicy:
+        type: Source
